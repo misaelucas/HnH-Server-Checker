@@ -1,8 +1,20 @@
 services:
   - type: web
-    name: frontend
-    env: static
+    name: backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python server_checker.py
     plan: free
+    repo: https://github.com/<your-username>/<your-repo-name>
+    path: backend
+
+  - type: static
+    name: frontend
     buildCommand: npm install && npm run build
-    startCommand: npm start
-    staticPublishPath: build
+    publishPath: build
+    plan: free
+    repo: https://github.com/<your-username>/<your-repo-name>
+    path: frontend
+    envVars:
+      - key: VITE_API_URL
+        value: https://<your-backend-service>.onrender.com/data

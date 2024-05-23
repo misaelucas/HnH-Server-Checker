@@ -2,14 +2,20 @@ import os
 import sys
 import time
 import urllib.request
+import pygame
 from pygame import mixer
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import threading
 import json
 from datetime import datetime
 
-# Initialize pygame mixer
-mixer.init()
+# Initialize pygame mixer only if audio device is available
+try:
+    mixer.init()
+    audio_available = True
+except pygame.error:
+    audio_available = False
+    print("Audio device not available. Continuing without audio.")
 
 # Paths to the audio files
 audio_path_up = 'free_alarm_stolen_from_misa.mp3'
@@ -37,14 +43,16 @@ def check_server_status():
                     current_state = " ".join(words[1:])
                     if current_state != last_state:
                         if words[1] == "hafen" and words[2] == "crashed":
-                            mixer.music.load(audio_path_crashed)
-                            mixer.music.play()
+                            if audio_available:
+                                mixer.music.load(audio_path_crashed)
+                                mixer.music.play()
                             crash_count += 1
                             crash_dates.append(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                             last_state = current_state
                         elif words[1] == "hafen" and words[2] == "up":
-                            mixer.music.load(audio_path_up)
-                            mixer.music.play()
+                            if audio_available:
+                                mixer.music.load(audio_path_up)
+                                mixer.music.play()
                             last_state = current_state
                         print(f"Server state changed: {current_state}")
                 elif words[0] == "users":
