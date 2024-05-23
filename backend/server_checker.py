@@ -2,14 +2,16 @@ import os
 import sys
 import time
 import urllib.request
-from pygame import mixer
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import threading
 import json
 from datetime import datetime
 
-# Initialize pygame mixer only if audio device is available
+# Check if pygame is available and initialize mixer if possible
 try:
+    import pygame
+    from pygame import mixer
+    pygame.init()
     mixer.init()
     audio_available = True
     print("Audio device available.")
@@ -17,9 +19,11 @@ except Exception as e:
     audio_available = False
     print(f"Audio device not available. Continuing without audio. Error: {e}")
 
+# Paths to the audio files
 audio_path_up = 'free_alarm_stolen_from_misa.mp3'
 audio_path_crashed = 'BOBERKURWA.mp3'
 
+# URL to check the server status
 url = "http://www.havenandhearth.com/mt/srv-mon"
 
 # Variables to track the server state, crash count, and crash dates
@@ -34,6 +38,7 @@ def check_server_status():
         with urllib.request.urlopen(url) as s:
             while ln := s.readline():
                 words = ln.decode("ascii").split()
+                print(f"Received line: {ln.decode('ascii')}")
                 if not words:
                     sys.stderr.write("haven-alarm: connected\n")
                     continue
@@ -88,6 +93,7 @@ server_thread = threading.Thread(target=run_server)
 server_thread.daemon = True
 server_thread.start()
 
+# Infinite loop to continuously check the server status
 while True:
     check_server_status()
-    time.sleep(60)  
+    time.sleep(60)  # Check every 60 seconds

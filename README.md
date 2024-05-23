@@ -4,7 +4,7 @@ A comprehensive solution to track the status of the Haven and Hearth game server
 
 here's a script for deployment:
 
-```
+```bash
 
 services:
   - type: web
@@ -22,7 +22,7 @@ services:
     plan: free
     path: frontend
 
-
+```
 
 
 ## Backend
@@ -47,11 +47,10 @@ The backend checks the Haven and Hearth server status periodically and logs cras
 
 1. **Install dependencies:**
 
-   ```bash
    pip install -r requirements.txt
+   
 
 2. **Run the server checker:**
-   ```bash
     python server_checker.py
 
 
