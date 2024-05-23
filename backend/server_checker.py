@@ -7,6 +7,7 @@ import threading
 import json
 from datetime import datetime
 
+#####
 # Check if pygame is available and initialize mixer if possible
 try:
     import pygame
