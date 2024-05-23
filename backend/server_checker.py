@@ -2,7 +2,6 @@ import os
 import sys
 import time
 import urllib.request
-import pygame
 from pygame import mixer
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import threading
@@ -13,15 +12,14 @@ from datetime import datetime
 try:
     mixer.init()
     audio_available = True
-except pygame.error:
+    print("Audio device available.")
+except Exception as e:
     audio_available = False
-    print("Audio device not available. Continuing without audio.")
+    print(f"Audio device not available. Continuing without audio. Error: {e}")
 
-# Paths to the audio files
 audio_path_up = 'free_alarm_stolen_from_misa.mp3'
 audio_path_crashed = 'BOBERKURWA.mp3'
 
-# URL to check the server status
 url = "http://www.havenandhearth.com/mt/srv-mon"
 
 # Variables to track the server state, crash count, and crash dates
@@ -49,12 +47,13 @@ def check_server_status():
                             crash_count += 1
                             crash_dates.append(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                             last_state = current_state
+                            print(f"Server state changed: {current_state}")
                         elif words[1] == "hafen" and words[2] == "up":
                             if audio_available:
                                 mixer.music.load(audio_path_up)
                                 mixer.music.play()
                             last_state = current_state
-                        print(f"Server state changed: {current_state}")
+                            print(f"Server state changed: {current_state}")
                 elif words[0] == "users":
                     print(f"Current users: {words[1]}")
     except urllib.error.URLError as exc:
@@ -89,7 +88,6 @@ server_thread = threading.Thread(target=run_server)
 server_thread.daemon = True
 server_thread.start()
 
-# Infinite loop to continuously check the server status
 while True:
     check_server_status()
-    time.sleep(60)  # Check every 60 seconds
+    time.sleep(60)  
